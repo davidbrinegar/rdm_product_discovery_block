@@ -1,0 +1,33 @@
+name: Looker Marketplace Spectacles Blocks Tests
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test_action_job:
+    runs-on: ubuntu-latest
+    name: Looker Marketplace Spectacles Tests
+    steps:
+      - name: Checkout Target Repo (Looker)
+        with:
+          path: main
+        uses: actions/checkout@v3
+      - name: Checkout Action Repo
+        uses: actions/checkout@v3
+        with:
+          repository: 4mile/looker-marketplace-blocks-test
+          path: spectacles-tests
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10.4'
+      - run: pip install spectacles
+      - name: Run Spectacles Test Action
+        env:   
+          LOOKER_BASE_URL: ${{secrets.LOOKER_BASE_URL}}
+          LOOKER_CLIENT_ID: ${{secrets.LOOKER_CLIENT_ID}}
+          LOOKER_CLIENT_SECRET: ${{secrets.LOOKER_CLIENT_SECRET}}
+          LOOKER_PROJECT_NAME: ${{secrets.LOOKER_PROJECT_NAME}}
+        uses: 4mile/looker-marketplace-blocks-test@v2.1.2
